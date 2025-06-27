@@ -172,18 +172,32 @@ with col3:
 
 
 # === Map Results ===
+# === Map Results ===
 if st.session_state.results:
     st.markdown("### 📍 Locations Map")
-    first = st.session_state.results[0]
+
+    # Deduplicate by (lat, lng)
+    unique_coords = set()
+    unique_sites = []
+    for site in st.session_state.results:
+        loc = site["location"]
+        coord = (round(loc["lat"], 6), round(loc["lng"], 6))  # Round for fuzzy match
+        if coord not in unique_coords:
+            unique_coords.add(coord)
+            unique_sites.append(site)
+
+    # Center map on the first unique site
+    first = unique_sites[0]
     m = folium.Map(location=[first["location"]["lat"], first["location"]["lng"]], zoom_start=5)
     cluster = MarkerCluster().add_to(m)
 
-    for site in st.session_state.results:
+    for site in unique_sites:
         loc = site["location"]
         popup = f"<b>{site['name']}</b><br>{site['address']}<br><i>Source: {site['source']}</i><br>Status: {site['status']}"
         folium.Marker([loc["lat"], loc["lng"]], tooltip=site["name"], popup=popup).add_to(cluster)
 
-    st_folium(m, width=3000, height=600)
+    st_folium(m, width=1000, height=300)
+
 
 
 

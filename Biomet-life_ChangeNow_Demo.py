@@ -196,7 +196,7 @@ if st.session_state.results:
         popup = f"<b>{site['name']}</b><br>{site['address']}<br><i>Source: {site['source']}</i><br>Status: {site['status']}"
         folium.Marker([loc["lat"], loc["lng"]], tooltip=site["name"], popup=popup).add_to(cluster)
 
-    st_folium(m, width=1000, height=300)
+    st_folium(m, width=3000, height=300)
 
 
 
